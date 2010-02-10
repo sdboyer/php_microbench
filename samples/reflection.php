@@ -231,10 +231,10 @@ function _do_proc_methodexists() {
 
 function _do_refl_instanciate() {
   $refl = new ReflectionClass('RecursiveDirectoryIterator');
-  $refl->newInstance('/home/sdboyer/tmp');
+  $refl->newInstance('/tmp');
 }
 function _do_proc_instanciate() {
-  new RecursiveDirectoryIterator('/home/sdboyer/tmp');
+  new RecursiveDirectoryIterator('/tmp');
 }
 
 function class_noargs($args) {
