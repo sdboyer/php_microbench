@@ -136,19 +136,19 @@ function _run_bench_iterators($fh, MicroBenchmark $bench) {
 
 function microbench_refl_comparisons(MicroBenchmark $bench) {
   $bench->function = 'drb';
-  $bench->args = array('class' => 'FunctionBenchmark');
+  $bench->args = array('class' => 'RecursiveDirectoryIterator');
   $refloffset = $bench->runBench();
 
   $results = array();
   $functions = array(
-    '_do_refl_instanciate',
-    '_do_proc_instanciate',
     '_do_refl_interfaces',
     '_do_proc_interfaces',
     '_do_refl_methodexists',
     '_do_proc_methodexists',
     'do_reflection_bench',
     'do_procedural_bench',
+    '_do_refl_instanciate',
+    '_do_proc_instanciate',
   );
   $fh = fopen('refl_comparisons.csv', 'w');
   foreach ($functions as $func) {
@@ -172,40 +172,25 @@ function microbench_generic($bench, $function, $args) {
 $bench = new FunctionBenchmark();
 $bench->covar = 0.02;
 $bench->tries = 25;
+$bench->sampleSize = 15;
 date_default_timezone_set('America/Chicago');
-// microbench_all_refl_classes($bench);
-//microbench_all_classes_refl($bench);
-// microbench_instanciate_classes($bench);
-// microbench_refl_comparisons($bench);
-microbench_generic($bench, 'drb', array('class' => 'DirectoryIterator'));
-microbench_generic($bench, 'drb_int', array('class' => 'DirectoryIterator'));
+microbench_all_refl_classes($bench);
+microbench_all_classes_refl($bench);
+microbench_instanciate_classes($bench);
+microbench_refl_comparisons($bench);
 
-function drb_int($args) {
-  $refl = new ReflectionClass($args['class']);
-  $refl->getInterfaces();
-}
-
-// Benching functions
-
-//$bench->function = 'arshift';
-//$bench->args = array('class' => 'RecursiveDirectoryIterator');
-//$bench->runBench();
-//print_r($bench->getResults());
-//
-//function arshift($args) {
-//  $class = array_shift($args);
-//}
+/* ***************** Benching functions ***********/
 
 function do_reflection_bench($args) {
-  $refl = new ReflectionClass($args['class']);
-  if ($refl->implementsInterface('MicroBenchmark')) {
-    $instance = $refl->newInstance();
+  $refl = new ReflectionClass('RecursiveDirectoryIterator');
+  if ($refl->implementsInterface('Iterator')) {
+    // do stuff
   }
 }
 function do_procedural_bench($args) {
-  $interfaces = class_implements($args['class']);
-  if (isset($interfaces['MicroBenchmark'])) {
-    $instance = new $args['class']();
+  $interfaces = class_implements('RecursiveDirectoryIterator');
+  if (isset($interfaces['Iterator'])) {
+    // do stuff
   }
 }
 
@@ -231,10 +216,10 @@ function _do_proc_methodexists() {
 
 function _do_refl_instanciate() {
   $refl = new ReflectionClass('RecursiveDirectoryIterator');
-  $refl->newInstance('/tmp');
+  $refl->newInstance('.');
 }
 function _do_proc_instanciate() {
-  new RecursiveDirectoryIterator('/tmp');
+  new RecursiveDirectoryIterator('.');
 }
 
 function class_noargs($args) {
